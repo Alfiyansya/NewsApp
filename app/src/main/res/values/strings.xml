@@ -5,6 +5,7 @@
     <string name="title">TITLE</string>
     <string name="description">DESCRIPTION</string>
     <string name="published_at">PUBLISHED AT</string>
-    <string name="search">Search...</string>
+    <string name="search">Search…</string>
     <string name="fab">fab</string>
+    <string name="breaking_news">Breaking News</string>
 </resources>
