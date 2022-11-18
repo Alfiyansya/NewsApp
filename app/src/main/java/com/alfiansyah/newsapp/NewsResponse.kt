@@ -1,5 +1,7 @@
 package com.alfiansyah.newsapp
 
+import androidx.room.Entity
+import androidx.room.PrimaryKey
 import com.google.gson.annotations.SerializedName
 
 data class NewsResponse(
@@ -14,8 +16,13 @@ data class NewsResponse(
     val status: String
 )
 
+@Entity(
+    tableName = "articles"
+)
 data class ArticlesItem(
 
+    @PrimaryKey(autoGenerate = true)
+    val id : Int? = null,
     @field:SerializedName("publishedAt")
     val publishedAt: String,
 
