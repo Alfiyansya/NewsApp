@@ -1,6 +1,6 @@
 package com.alfiansyah.newsapp.api
 
-import com.alfiansyah.newsapp.NewsResponse
+import com.alfiansyah.newsapp.models.NewsResponse
 import com.alfiansyah.newsapp.util.Constants.Companion.API_KEY
 import retrofit2.Response
 import retrofit2.http.GET
