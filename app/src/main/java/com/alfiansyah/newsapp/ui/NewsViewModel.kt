@@ -1,5 +1,6 @@
 package com.alfiansyah.newsapp.ui
 
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -9,18 +10,19 @@ import com.alfiansyah.newsapp.util.Resource
 import kotlinx.coroutines.launch
 import retrofit2.Response
 
-class NewsViewModel(val newsRepository: NewsRepository) : ViewModel() {
-    val breakingNews: MutableLiveData<Resource<NewsResponse>> = MutableLiveData()
-    val breakingNewsPage = 1
+class NewsViewModel(private val newsRepository: NewsRepository) : ViewModel() {
+    private val _breakingNews: MutableLiveData<Resource<NewsResponse>> = MutableLiveData()
+    val breakingNews: LiveData<Resource<NewsResponse>> = _breakingNews
+    private val breakingNewsPage = 1
 
     init {
         getBreakingNews("us")
     }
 
     fun getBreakingNews(countryCode: String) = viewModelScope.launch {
-        breakingNews.postValue(Resource.Loading())
+        _breakingNews.postValue(Resource.Loading())
         val response = newsRepository.getBreakingNews(countryCode, breakingNewsPage)
-        breakingNews.postValue(handleBreakingNewsResponse(response))
+        _breakingNews.postValue(handleBreakingNewsResponse(response))
 
     }
 
