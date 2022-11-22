@@ -46,7 +46,7 @@ data class ArticlesItem(
 
     @field:SerializedName("content")
     val content: String
-)
+): java.io.Serializable
 
 data class Source(
 

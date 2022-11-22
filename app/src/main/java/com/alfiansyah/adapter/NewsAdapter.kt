@@ -12,16 +12,13 @@ import com.bumptech.glide.Glide
 
 class NewsAdapter : RecyclerView.Adapter<NewsAdapter.ArticleViewHolder>() {
     class ArticleViewHolder(private val binding: ItemArticlePreviewBinding) : ViewHolder(binding.root) {
-        fun bind(article: ArticlesItem?, onItemClick: ((ArticlesItem) -> Unit)?) {
+        fun bind(article: ArticlesItem?) {
             binding.apply {
                 tvDescription.text = article?.description
                 tvSource.text = article?.source?.name
                 tvTitle.text = article?.title
                 tvPublishedAt.text = article?.publishedAt
                 Glide.with(root.context).load(article?.urlToImage).into(ivArticleImage)
-                root.setOnClickListener {
-                    onItemClick
-                }
             }
         }
 
@@ -34,7 +31,10 @@ class NewsAdapter : RecyclerView.Adapter<NewsAdapter.ArticleViewHolder>() {
 
     override fun onBindViewHolder(holder: ArticleViewHolder, position: Int) {
         val article = differ.currentList[position]
-        holder.bind(article, onItemClickListener)
+        holder.bind(article)
+        holder.itemView.setOnClickListener {
+            onItemClickListener?.let { it(article) }
+        }
     }
 
     override fun getItemCount(): Int = differ.currentList.size
