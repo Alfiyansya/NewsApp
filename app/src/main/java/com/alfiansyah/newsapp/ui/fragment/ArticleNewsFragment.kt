@@ -14,11 +14,12 @@ import com.alfiansyah.newsapp.databinding.FragmentArticleBinding
 import com.alfiansyah.newsapp.repository.NewsRepository
 import com.alfiansyah.newsapp.ui.NewsViewModel
 import com.alfiansyah.newsapp.ui.NewsViewModelProviderFactory
+import com.google.android.material.snackbar.Snackbar
 
-class ArticleNewsFragment: Fragment(R.layout.fragment_article) {
-    private var _binding: FragmentArticleBinding?=null
+class ArticleNewsFragment : Fragment(R.layout.fragment_article) {
+    private var _binding: FragmentArticleBinding? = null
     private val binding get() = _binding
-    private val sharedViewModel: NewsViewModel by activityViewModels(){
+    private val sharedViewModel: NewsViewModel by activityViewModels() {
         NewsViewModelProviderFactory(NewsRepository(ArticleDatabase(requireActivity())))
     }
     val args: ArticleNewsFragmentArgs by navArgs()
@@ -33,10 +34,16 @@ class ArticleNewsFragment: Fragment(R.layout.fragment_article) {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        val  article = args.article
-        binding?.webView?.apply {
-            webViewClient = WebViewClient()
-            loadUrl(article.url)
+        val article = args.article
+        binding?.apply {
+            webView.apply {
+                webViewClient = WebViewClient()
+                loadUrl(article.url)
+            }
+            fab.setOnClickListener {
+                sharedViewModel.saveArticle(article)
+                Snackbar.make(view,"Article saved successfully",Snackbar.LENGTH_SHORT).show()
+            }
         }
 
     }
