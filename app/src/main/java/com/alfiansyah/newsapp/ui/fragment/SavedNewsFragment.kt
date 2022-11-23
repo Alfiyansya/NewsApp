@@ -46,37 +46,38 @@ class SavedNewsFragment : Fragment(R.layout.fragment_saved_news) {
                 R.id.action_savedNewsFragment_to_articleNewsFragment,
                 bundle
             )
-            val itemTouchHelperCallback = object : ItemTouchHelper.SimpleCallback(
-                ItemTouchHelper.UP or ItemTouchHelper.DOWN,
-                ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT
-            ){
-                override fun onMove(
-                    recyclerView: RecyclerView,
-                    viewHolder: RecyclerView.ViewHolder,
-                    target: RecyclerView.ViewHolder
-                ): Boolean {
-                    return true
-                }
+        }
+        val itemTouchHelperCallback = object : ItemTouchHelper.SimpleCallback(
+            ItemTouchHelper.UP or ItemTouchHelper.DOWN,
+            ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT
+        ) {
+            override fun onMove(
+                recyclerView: RecyclerView,
+                viewHolder: RecyclerView.ViewHolder,
+                target: RecyclerView.ViewHolder
+            ): Boolean {
+                return true
+            }
 
-                override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
-                    val position = viewHolder.adapterPosition
-                    val article = newsAdapter.differ.currentList[position]
-                    sharedViewModel.deleteArticle(article)
-                    Snackbar.make(view,"Successfully deleted article", Snackbar.LENGTH_SHORT).apply {
-                        setAction("Undo"){
-                            sharedViewModel.saveArticle(article)
-                        }
-                        show()
+            override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
+                val position = viewHolder.adapterPosition
+                val article = newsAdapter.differ.currentList[position]
+                sharedViewModel.deleteArticle(article)
+                Snackbar.make(view, "Successfully deleted article", Snackbar.LENGTH_SHORT).apply {
+                    setAction("Undo") {
+                        sharedViewModel.saveArticle(article)
                     }
+                    show()
                 }
-            }
-            ItemTouchHelper(itemTouchHelperCallback).apply {
-                attachToRecyclerView(binding?.rvSavedNews)
-            }
-            sharedViewModel.getSavedNews().observe(viewLifecycleOwner) { articles ->
-                newsAdapter.differ.submitList(articles)
             }
         }
+        ItemTouchHelper(itemTouchHelperCallback).apply {
+            attachToRecyclerView(binding?.rvSavedNews)
+        }
+        sharedViewModel.getSavedNews().observe(viewLifecycleOwner) { articles ->
+            newsAdapter.differ.submitList(articles)
+        }
+
     }
 
     private fun setupRecyclerView() {

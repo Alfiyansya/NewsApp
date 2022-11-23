@@ -24,10 +24,10 @@ import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
-class SearchNewsFragment: Fragment(R.layout.fragment_search_news) {
-    private var _binding:FragmentSearchNewsBinding?=null
+class SearchNewsFragment : Fragment(R.layout.fragment_search_news) {
+    private var _binding: FragmentSearchNewsBinding? = null
     private val binding get() = _binding
-    private val sharedViewModel: NewsViewModel by activityViewModels(){
+    private val sharedViewModel: NewsViewModel by activityViewModels() {
         NewsViewModelProviderFactory(NewsRepository(ArticleDatabase(requireActivity())))
     }
     private val TAG = "SearchNewsFragment"
@@ -40,6 +40,7 @@ class SearchNewsFragment: Fragment(R.layout.fragment_search_news) {
         _binding = FragmentSearchNewsBinding.inflate(inflater, container, false)
         return binding?.root
     }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         setupRecyclerView()
@@ -53,12 +54,12 @@ class SearchNewsFragment: Fragment(R.layout.fragment_search_news) {
             )
         }
         var job: Job? = null
-        binding?.etSearch?.addTextChangedListener{ editable ->
+        binding?.etSearch?.addTextChangedListener { editable ->
             job?.cancel()
             job = MainScope().launch {
                 delay(SEARCH_NEWS_TIME_DELAY)
                 editable?.let {
-                    if (editable.toString().isNotEmpty()){
+                    if (editable.toString().isNotEmpty()) {
                         sharedViewModel.searchNews(editable.toString())
                     }
                 }
@@ -72,24 +73,23 @@ class SearchNewsFragment: Fragment(R.layout.fragment_search_news) {
                         newsAdapter.differ.submitList(newsResponse.articles)
                     }
                 }
-                is Resource.Error ->{
+                is Resource.Error -> {
                     showProgressbar(false)
                     response.message?.let { message ->
-                        Log.e(TAG,"An error occured: $message")
+                        Log.e(TAG, "An error occured: $message")
                     }
                 }
-                is Resource.Loading ->{
+                is Resource.Loading -> {
                     showProgressbar(true)
                 }
 
                 else -> {
                     //Do nothing
-
                 }
             }
-
         }
     }
+
     private fun showProgressbar(isLoading: Boolean) {
         binding?.apply {
             if (isLoading) {
@@ -97,9 +97,7 @@ class SearchNewsFragment: Fragment(R.layout.fragment_search_news) {
             } else {
                 paginationProgressBar.visibility = View.INVISIBLE
             }
-
         }
-
     }
 
     private fun setupRecyclerView() {
@@ -110,6 +108,5 @@ class SearchNewsFragment: Fragment(R.layout.fragment_search_news) {
                 layoutManager = LinearLayoutManager(activity)
             }
         }
-
     }
 }

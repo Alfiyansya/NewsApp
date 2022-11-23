@@ -3,6 +3,7 @@ package com.alfiansyah.newsapp.models
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import com.google.gson.annotations.SerializedName
+import java.io.Serializable
 
 data class NewsResponse(
 
@@ -46,7 +47,7 @@ data class ArticlesItem(
 
     @field:SerializedName("content")
     val content: String
-): java.io.Serializable
+): Serializable
 
 data class Source(
 
