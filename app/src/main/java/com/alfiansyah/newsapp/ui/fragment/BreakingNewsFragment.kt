@@ -18,6 +18,7 @@ import com.alfiansyah.newsapp.databinding.FragmentBreakingNewsBinding
 import com.alfiansyah.newsapp.repository.NewsRepository
 import com.alfiansyah.newsapp.ui.NewsViewModel
 import com.alfiansyah.newsapp.ui.NewsViewModelProviderFactory
+import com.alfiansyah.newsapp.util.Constants.Companion.QUERY_PAGE_SIZE
 import com.alfiansyah.newsapp.util.Resource
 
 class BreakingNewsFragment : Fragment(R.layout.fragment_breaking_news) {
@@ -54,16 +55,22 @@ class BreakingNewsFragment : Fragment(R.layout.fragment_breaking_news) {
                 is Resource.Success -> {
                     showProgressbar(false)
                     response.data?.let { newsResponse ->
-                        newsAdapter.differ.submitList(newsResponse.articles)
+                        newsAdapter.differ.submitList(newsResponse.articles.toList())
+                        val totalPages = newsResponse.totalResults / QUERY_PAGE_SIZE + 2
+                        isLastPage = sharedViewModel.breakingNewsPage == totalPages
+                        if (isLastPage) {
+                            binding?.rvBreakingNews?.setPadding(0, 0, 0, 0)
+
+                        }
                     }
                 }
-                is Resource.Error ->{
+                is Resource.Error -> {
                     showProgressbar(false)
                     response.message?.let { message ->
-                        Log.e(TAG,"An error occured: $message")
+                        Log.e(TAG, "An error occured: $message")
                     }
                 }
-                is Resource.Loading ->{
+                is Resource.Loading -> {
                     showProgressbar(true)
                 }
 
@@ -80,8 +87,10 @@ class BreakingNewsFragment : Fragment(R.layout.fragment_breaking_news) {
         binding?.apply {
             if (isLoading) {
                 paginationProgressBar.visibility = View.VISIBLE
+                this@BreakingNewsFragment.isLoading = true
             } else {
                 paginationProgressBar.visibility = View.INVISIBLE
+                this@BreakingNewsFragment.isLoading = false
             }
 
         }
@@ -92,10 +101,10 @@ class BreakingNewsFragment : Fragment(R.layout.fragment_breaking_news) {
     var isLastPage = false
     var isScrolling = false
 
-    val scrollListener = object : RecyclerView.OnScrollListener(){
+    private val scrollListener = object : RecyclerView.OnScrollListener() {
         override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
             super.onScrollStateChanged(recyclerView, newState)
-            if(newState == AbsListView.OnScrollListener.SCROLL_STATE_TOUCH_SCROLL){
+            if (newState == AbsListView.OnScrollListener.SCROLL_STATE_TOUCH_SCROLL) {
                 isScrolling = true
             }
         }
@@ -107,7 +116,16 @@ class BreakingNewsFragment : Fragment(R.layout.fragment_breaking_news) {
             val visibleItemCount = layoutManager.childCount
             val totalItemCount = layoutManager.itemCount
 
-            val isNotLoadingAndNotLastPage = !isLastPage && !isLastPage
+            val isNotLoadingAndNotLastPage = !isLoading && !isLastPage
+            val isAtLastItem = firstVisibleItemPosition + visibleItemCount >= totalItemCount
+            val isNotAtBeginning = firstVisibleItemPosition >= 0
+            val isTotalMoreThanVisible = totalItemCount >= QUERY_PAGE_SIZE
+            val shouldPaginate =
+                isNotAtBeginning && isNotLoadingAndNotLastPage && isTotalMoreThanVisible && isAtLastItem && isScrolling
+            if (shouldPaginate) {
+                sharedViewModel.getBreakingNews("us")
+                isScrolling = false
+            }
         }
 
     }
@@ -118,8 +136,9 @@ class BreakingNewsFragment : Fragment(R.layout.fragment_breaking_news) {
             rvBreakingNews.apply {
                 adapter = newsAdapter
                 layoutManager = LinearLayoutManager(activity)
+                addOnScrollListener(this@BreakingNewsFragment.scrollListener)
             }
         }
-
     }
+
 }

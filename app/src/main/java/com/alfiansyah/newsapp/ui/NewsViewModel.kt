@@ -16,16 +16,16 @@ class NewsViewModel(private val newsRepository: NewsRepository) : ViewModel() {
     val breakingNews: LiveData<Resource<NewsResponse>> = _breakingNews
     private val _searchNews: MutableLiveData<Resource<NewsResponse>> = MutableLiveData()
     val searchNews: LiveData<Resource<NewsResponse>> = _searchNews
-    private var breakingNewsPage = 1
+    var breakingNewsPage = 1
     var breakingNewsResponse: NewsResponse? = null
-    private var searchNewsPage = 1
+    var searchNewsPage = 1
     var searchNewsResponse: NewsResponse? = null
 
     init {
         getBreakingNews("us")
     }
 
-    private fun getBreakingNews(countryCode: String) = viewModelScope.launch {
+    fun getBreakingNews(countryCode: String) = viewModelScope.launch {
         _breakingNews.postValue(Resource.Loading())
         val response = newsRepository.getBreakingNews(countryCode, breakingNewsPage)
         _breakingNews.postValue(handleBreakingNewsResponse(response))
@@ -41,9 +41,9 @@ class NewsViewModel(private val newsRepository: NewsRepository) : ViewModel() {
         if (response.isSuccessful) {
             response.body()?.let { resultResponse ->
                 breakingNewsPage++
-                if (breakingNewsResponse == null){
+                if (breakingNewsResponse == null) {
                     breakingNewsResponse = resultResponse
-                }else{
+                } else {
                     val oldArticlesItem = breakingNewsResponse?.articles
                     val newArticleItem = resultResponse.articles
                     oldArticlesItem?.addAll(newArticleItem)
@@ -58,9 +58,9 @@ class NewsViewModel(private val newsRepository: NewsRepository) : ViewModel() {
         if (response.isSuccessful) {
             response.body()?.let { resultResponse ->
                 searchNewsPage++
-                if (searchNewsResponse == null){
+                if (searchNewsResponse == null) {
                     searchNewsResponse = resultResponse
-                }else{
+                } else {
                     val oldArticlesItem = searchNewsResponse?.articles
                     val newArticleItem = resultResponse.articles
                     oldArticlesItem?.addAll(newArticleItem)
