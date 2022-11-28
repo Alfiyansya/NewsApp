@@ -19,10 +19,10 @@ import com.google.android.material.snackbar.Snackbar
 class ArticleNewsFragment : Fragment(R.layout.fragment_article) {
     private var _binding: FragmentArticleBinding? = null
     private val binding get() = _binding
-    private val sharedViewModel: NewsViewModel by activityViewModels() {
-        NewsViewModelProviderFactory(NewsRepository(ArticleDatabase(requireActivity())))
+    private val sharedViewModel: NewsViewModel by activityViewModels {
+        NewsViewModelProviderFactory(requireActivity().application,NewsRepository(ArticleDatabase(requireActivity())))
     }
-    val args: ArticleNewsFragmentArgs by navArgs()
+    private val args: ArticleNewsFragmentArgs by navArgs()
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,

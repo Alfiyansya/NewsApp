@@ -22,10 +22,10 @@ import com.google.android.material.snackbar.Snackbar
 class SavedNewsFragment : Fragment(R.layout.fragment_saved_news) {
     private var _binding: FragmentSavedNewsBinding? = null
     private val binding get() = _binding
-    private val sharedViewModel: NewsViewModel by activityViewModels() {
-        NewsViewModelProviderFactory(NewsRepository(ArticleDatabase(requireActivity())))
+    private val sharedViewModel: NewsViewModel by activityViewModels{
+        NewsViewModelProviderFactory(requireActivity().application,NewsRepository(ArticleDatabase(requireActivity())))
     }
-    lateinit var newsAdapter: NewsAdapter
+    private lateinit var newsAdapter: NewsAdapter
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,

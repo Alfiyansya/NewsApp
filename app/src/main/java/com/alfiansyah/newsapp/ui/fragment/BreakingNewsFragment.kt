@@ -1,11 +1,11 @@
 package com.alfiansyah.newsapp.ui.fragment
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.AbsListView
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
@@ -25,10 +25,9 @@ class BreakingNewsFragment : Fragment(R.layout.fragment_breaking_news) {
     private var _binding: FragmentBreakingNewsBinding? = null
     private val binding get() = _binding
     private val sharedViewModel: NewsViewModel by activityViewModels {
-        NewsViewModelProviderFactory(NewsRepository(ArticleDatabase(requireActivity())))
+        NewsViewModelProviderFactory(requireActivity().application,NewsRepository(ArticleDatabase(requireActivity())))
     }
-    lateinit var newsAdapter: NewsAdapter
-    val TAG = "BreakingNewsFragment"
+    private lateinit var newsAdapter: NewsAdapter
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -67,7 +66,7 @@ class BreakingNewsFragment : Fragment(R.layout.fragment_breaking_news) {
                 is Resource.Error -> {
                     showProgressbar(false)
                     response.message?.let { message ->
-                        Log.e(TAG, "An error occured: $message")
+                        Toast.makeText(activity,"An error occured: $message", Toast.LENGTH_SHORT).show()
                     }
                 }
                 is Resource.Loading -> {

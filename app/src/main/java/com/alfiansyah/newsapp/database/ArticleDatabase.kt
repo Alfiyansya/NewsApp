@@ -10,7 +10,7 @@ import com.alfiansyah.newsapp.models.ArticlesItem
 
 @Database(
     entities = [ArticlesItem::class],
-    version = 1
+    version = 2,
 )
 @TypeConverters(Converters::class)
 abstract class ArticleDatabase : RoomDatabase() {
@@ -30,7 +30,8 @@ abstract class ArticleDatabase : RoomDatabase() {
                 context.applicationContext,
                 ArticleDatabase::class.java,
                 "article_db.db"
-            ).build()
+            ).fallbackToDestructiveMigration()
+                .build()
     }
 
 }
